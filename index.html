@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infrastructure — Visual Architecture Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg-deep: #080C14;
+    --bg-panel: #0D1320;
+    --bg-card: #111827;
+    --bg-hover: #1A2235;
+    --border: #1E2D45;
+    --border-bright: #2A3F5F;
+    --text-primary: #E8EDF5;
+    --text-secondary: #7A8FA8;
+    --text-muted: #3D5066;
+    --accent-blue: #3B82F6;
+    --accent-cyan: #06B6D4;
+    --accent-green: #10B981;
+    --accent-purple: #8B5CF6;
+    --accent-orange: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-pink: #EC4899;
+    --grid-color: rgba(59,130,246,0.04);
+    --line-security: #EF4444;
+    --line-identity: #8B5CF6;
+    --line-network: #06B6D4;
+    --line-data: #10B981;
+    --line-api: #F59E0B;
+    --glow-blue: 0 0 20px rgba(59,130,246,0.3);
+    --glow-cyan: 0 0 20px rgba(6,182,212,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* HEADER */
+  header {
+    height: 52px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+  }
+
+  .logo-badge {
+    font-size: 9px;
+    color: var(--accent-cyan);
+    letter-spacing: 0.1em;
+    font-family: 'Space Mono', monospace;
+    opacity: 0.7;
+  }
+
+  .header-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+  .header-tools { display: flex; gap: 4px; align-items: center; }
+
+  .tool-btn {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .tool-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-bright); }
+  .tool-btn.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); border-color: rgba(59,130,246,0.4); }
+
+  .tool-btn svg { width: 13px; height: 13px; }
+
+  .header-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+  .export-btn {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 5px;
+    border: 1px solid rgba(59,130,246,0.4);
+    background: rgba(59,130,246,0.12);
+    color: var(--accent-blue);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .export-btn:hover { background: rgba(59,130,246,0.25); box-shadow: var(--glow-blue); }
+
+  /* MAIN LAYOUT */
+  .workspace {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* LEFT SIDEBAR - components */
+  .sidebar-left {
+    width: 200px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-section-title {
+    font-size: 9px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+
+  .component-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .component-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 4px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    cursor: grab;
+    transition: all 0.15s;
+    background: var(--bg-card);
+  }
+
+  .component-item:hover {
+    border-color: var(--border-bright);
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+  }
+
+  .component-item:active { cursor: grabbing; transform: scale(0.96); }
+
+  .comp-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .comp-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.2;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Connection type legend */
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 2px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 6px;
+    transition: background 0.1s;
+  }
+
+  .legend-item:hover { background: var(--bg-hover); }
+  .legend-item.selected { background: var(--bg-hover); }
+
+  .legend-dot {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* CANVAS */
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bg-deep);
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(rgba(59,130,246,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.015) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+    cursor: default;
+  }
+
+  #canvas-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #canvas-svg.connecting { pointer-events: all; }
+
+  .canvas-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: grab;
+    z-index: 10;
+    transition: filter 0.15s;
+  }
+
+  .canvas-node:active { cursor: grabbing; }
+  .canvas-node.selected .node-body { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59,130,246,0.3), var(--glow-blue); }
+  .canvas-node.connecting-source .node-body { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(6,182,212,0.4); }
+
+  .node-body {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .node-body:hover { border-color: var(--border-bright); background: var(--bg-hover); }
+
+  .node-connect-btn {
+    position: absolute;
+    top: -8px; right: -8px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    border: 2px solid var(--bg-deep);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    z-index: 20;
+    transition: transform 0.1s;
+  }
+
+  .canvas-node:hover .node-connect-btn { display: flex; }
+  .node-connect-btn:hover { transform: scale(1.2); }
+
+  .node-delete-btn {
+    position: absolute;
+    top: -8px; left: -8px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    border: 2px solid var(--bg-deep);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    z-index: 20;
+  }
+
+  .canvas-node:hover .node-delete-btn { display: flex; }
+
+  .node-label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 80px;
+    line-height: 1.3;
+  }
+
+  /* RIGHT SIDEBARS */
+  .sidebar-right {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .right-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .right-tab {
+    flex: 1;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .right-tab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+  .right-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+  .tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .tab-content.active { display: flex; }
+
+  /* DETAILS PANEL */
+  .details-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .no-selection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .no-selection-icon { font-size: 32px; opacity: 0.3; margin-bottom: 4px; }
+
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+
+  .field-label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .field-input, .field-textarea {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    transition: border-color 0.15s;
+    resize: none;
+    width: 100%;
+  }
+
+  .field-input:focus, .field-textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background: rgba(59,130,246,0.05);
+  }
+
+  .field-textarea { height: 80px; }
+
+  .node-info-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .node-info-icon { font-size: 24px; }
+
+  .node-info-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .node-info-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* AI ADVISOR */
+  .ai-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ai-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+  }
+
+  .ai-header-text { font-size: 12px; font-weight: 500; }
+  .ai-model { font-size: 10px; color: var(--text-muted); font-family: 'Space Mono', monospace; margin-left: auto; }
+
+  .ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ai-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ai-msg.user { align-items: flex-end; }
+  .ai-msg.assistant { align-items: flex-start; }
+
+  .ai-bubble {
+    max-width: 220px;
+    padding: 8px 11px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .ai-msg.user .ai-bubble {
+    background: rgba(59,130,246,0.2);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--text-primary);
+    border-bottom-right-radius: 3px;
+  }
+
+  .ai-msg.assistant .ai-bubble {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-bottom-left-radius: 3px;
+  }
+
+  .ai-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .ai-hints {
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .hint-chip {
+    padding: 4px 9px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .hint-chip:hover {
+    background: rgba(59,130,246,0.1);
+    border-color: rgba(59,130,246,0.4);
+    color: var(--accent-blue);
+  }
+
+  .ai-input-row {
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .ai-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .ai-input:focus { outline: none; border-color: var(--accent-blue); }
+
+  .ai-send-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-blue);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .ai-send-btn:hover { background: #2563EB; box-shadow: var(--glow-blue); }
+
+  /* SVG LINES */
+  .conn-line {
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 3px currentColor);
+    cursor: pointer;
+    pointer-events: stroke;
+  }
+
+  .conn-line:hover { stroke-width: 3; }
+
+  .conn-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    fill: var(--text-muted);
+    text-anchor: middle;
+  }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+  }
+
+  /* MODAL EXPORT */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    padding: 24px;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .modal-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  .modal-options { display: flex; flex-direction: column; gap: 8px; }
+
+  .modal-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .modal-opt:hover { border-color: var(--accent-blue); background: rgba(59,130,246,0.05); }
+
+  .modal-opt-icon { font-size: 22px; }
+  .modal-opt-text { font-size: 12px; font-weight: 500; }
+  .modal-opt-sub { font-size: 11px; color: var(--text-muted); }
+
+  .modal-close {
+    align-self: flex-end;
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  /* STATUS BAR */
+  .statusbar {
+    height: 24px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 16px;
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  .status-item { display: flex; align-items: center; gap: 5px; }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green); }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+  /* Connecting mode cursor */
+  #canvas-container.connecting-mode { cursor: crosshair; }
+
+  .temp-line { stroke-dasharray: 5 4; animation: dashMove 0.5s linear infinite; }
+  @keyframes dashMove { to { stroke-dashoffset: -9; } }
+
+  /* Typing indicator */
+  .typing-dots { display: flex; gap: 3px; align-items: center; padding: 2px 0; }
+  .typing-dots span {
+    width: 5px; height: 5px; background: var(--text-muted);
+    border-radius: 50%; animation: bounce 0.9s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">INF</div>
+    <div>
+      <div class="logo-text">INFRASTRUCTURE</div>
+      <div class="logo-badge">ARCHITECT v1.0</div>
+    </div>
+  </div>
+  <div class="header-sep"></div>
+  <div class="header-tools">
+    <button class="tool-btn active" id="btn-select" onclick="setTool('select')">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2l5 12 2-4 4-2-11-6z"/></svg>
+      Select
+    </button>
+    <button class="tool-btn" id="btn-connect" onclick="setTool('connect')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="3" cy="3" r="2"/><circle cx="13" cy="13" r="2"/><line x1="5" y1="5" x2="11" y2="11"/></svg>
+      Connect
+    </button>
+    <button class="tool-btn" id="btn-delete-conn" onclick="deleteSelectedConnection()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+      Delete Line
+    </button>
+  </div>
+  <div class="header-right">
+    <button class="export-btn" onclick="openExport()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v9M5 8l3 3 3-3M2 13h12"/></svg>
+      Export
+    </button>
+  </div>
+</header>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar-left">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Applications</div>
+      <div class="component-grid" id="component-grid"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Connection Types</div>
+      <div id="legend-list"></div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div id="canvas-container">
+    <svg id="canvas-svg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-security" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#EF4444"/>
+        </marker>
+        <marker id="arrow-identity" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8B5CF6"/>
+        </marker>
+        <marker id="arrow-network" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#06B6D4"/>
+        </marker>
+        <marker id="arrow-data" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#10B981"/>
+        </marker>
+        <marker id="arrow-api" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#F59E0B"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar-right">
+    <div class="right-tabs">
+      <div class="right-tab active" onclick="switchTab('details')" id="tab-details">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+        Details
+      </div>
+      <div class="right-tab" onclick="switchTab('ai')" id="tab-ai">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a2 2 0 110 4 2 2 0 010-4zm0 10a5 5 0 01-4-2c0-1.33 2.67-2 4-2s4 .67 4 2a5 5 0 01-4 2z"/></svg>
+        AI Advisor
+      </div>
+    </div>
+
+    <!-- DETAILS TAB -->
+    <div class="tab-content active" id="content-details">
+      <div id="details-no-sel" class="no-selection" style="flex:1;display:flex;">
+        <div class="no-selection-icon">⬡</div>
+        <div>Select a component<br>to view details</div>
+      </div>
+      <div id="details-form" style="display:none;flex-direction:column;overflow:hidden;">
+        <div class="node-info-header">
+          <div class="node-info-icon" id="info-icon"></div>
+          <div>
+            <div class="node-info-name" id="info-name"></div>
+            <div class="node-info-type" id="info-type"></div>
+          </div>
+        </div>
+        <div class="details-body">
+          <div class="field-group">
+            <div class="field-label">Label / Alias</div>
+            <input class="field-input" id="field-alias" placeholder="e.g. Production Okta" oninput="updateNodeField('alias')">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Domain / Hostname</div>
+            <input class="field-input" id="field-domain" placeholder="e.g. auth.company.com" oninput="updateNodeField('domain')">
+          </div>
+          <div class="field-group">
+            <div class="field-label">IP Address</div>
+            <input class="field-input" id="field-ip" placeholder="e.g. 10.0.1.45" oninput="updateNodeField('ip')">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Port / Protocol</div>
+            <input class="field-input" id="field-port" placeholder="e.g. 443 / HTTPS" oninput="updateNodeField('port')">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Environment</div>
+            <input class="field-input" id="field-env" placeholder="e.g. Production / Staging" oninput="updateNodeField('env')">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Notes</div>
+            <textarea class="field-textarea" id="field-notes" placeholder="Technical notes, configs, dependencies..." oninput="updateNodeField('notes')"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI TAB -->
+    <div class="tab-content" id="content-ai">
+      <div class="ai-header">
+        <div class="ai-pulse"></div>
+        <div class="ai-header-text">AI Advisor</div>
+        <div class="ai-model">claude-infra</div>
+      </div>
+      <div class="ai-messages" id="ai-messages"></div>
+      <div class="ai-hints" id="ai-hints">
+        <div class="hint-chip" onclick="sendHint(this.textContent)">Best practices?</div>
+        <div class="hint-chip" onclick="sendHint(this.textContent)">Okta + AD setup</div>
+        <div class="hint-chip" onclick="sendHint(this.textContent)">Zero-trust model</div>
+        <div class="hint-chip" onclick="sendHint(this.textContent)">Jira + Zapier flow</div>
+        <div class="hint-chip" onclick="sendHint(this.textContent)">Network security tips</div>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-input" placeholder="Ask about your architecture..." onkeydown="if(event.key==='Enter')sendAI()">
+        <button class="ai-send-btn" onclick="sendAI()">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="status-item"><div class="status-dot"></div>Ready</div>
+  <div class="status-item" id="status-nodes">Nodes: 0</div>
+  <div class="status-item" id="status-connections">Connections: 0</div>
+  <div class="status-item" id="status-tool">Tool: Select</div>
+  <div class="status-item" style="margin-left:auto;opacity:0.5;">Infrastructure Architect v1.0</div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <div class="modal-title">// Export Diagram</div>
+    <div class="modal-desc">Choose your export format. The canvas will be captured at full resolution.</div>
+    <div class="modal-options">
+      <div class="modal-opt" onclick="exportPNG()">
+        <div class="modal-opt-icon">🖼</div>
+        <div>
+          <div class="modal-opt-text">PNG Image</div>
+          <div class="modal-opt-sub">High-resolution bitmap export</div>
+        </div>
+      </div>
+      <div class="modal-opt" onclick="exportSVG()">
+        <div class="modal-opt-icon">⬡</div>
+        <div>
+          <div class="modal-opt-text">SVG Vector</div>
+          <div class="modal-opt-sub">Scalable vector format</div>
+        </div>
+      </div>
+      <div class="modal-opt" onclick="exportJSON()">
+        <div class="modal-opt-icon">{ }</div>
+        <div>
+          <div class="modal-opt-text">JSON Data</div>
+          <div class="modal-opt-sub">Save & reload your diagram</div>
+        </div>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeExport()">Close</button>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const COMPONENTS = [
+  { id:'ad',      label:'AD Manager', emoji:'🏢', color:'#3B82F6', category:'identity', desc:'Active Directory' },
+  { id:'jira',    label:'Jira',       emoji:'📋', color:'#0052CC', category:'project',  desc:'Project Tracking' },
+  { id:'zapier',  label:'Zapier',     emoji:'⚡', color:'#FF4A00', category:'automation',desc:'Workflow Automation' },
+  { id:'gcp',     label:'GCP',        emoji:'☁️', color:'#4285F4', category:'cloud',    desc:'Google Cloud' },
+  { id:'okta',    label:'Okta',       emoji:'🔐', color:'#007DC1', category:'identity', desc:'Identity Provider' },
+  { id:'jamf',    label:'Jamf',       emoji:'🍎', color:'#75B0E0', category:'mdm',      desc:'Device Management' },
+  { id:'firewall',label:'Firewall',   emoji:'🛡️', color:'#EF4444', category:'security', desc:'Network Security' },
+  { id:'vpn',     label:'VPN',        emoji:'🔒', color:'#8B5CF6', category:'network',  desc:'VPN Gateway' },
+  { id:'siem',    label:'SIEM',       emoji:'📡', color:'#F59E0B', category:'security', desc:'Security Monitor' },
+  { id:'k8s',     label:'Kubernetes', emoji:'⎈',  color:'#326CE5', category:'infra',    desc:'Container Orchestration' },
+  { id:'github',  label:'GitHub',     emoji:'🐙', color:'#6E5494', category:'devops',   desc:'Source Control' },
+  { id:'slack',   label:'Slack',      emoji:'💬', color:'#4A154B', category:'collab',   desc:'Team Communication' },
+];
+
+const CONN_TYPES = [
+  { id:'security', label:'Security',  color:'#EF4444' },
+  { id:'identity', label:'Identity',  color:'#8B5CF6' },
+  { id:'network',  label:'Network',   color:'#06B6D4' },
+  { id:'data',     label:'Data Flow', color:'#10B981' },
+  { id:'api',      label:'API',       color:'#F59E0B' },
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let nodes = [];
+let connections = [];
+let selectedNode = null;
+let selectedConn = null;
+let currentTool = 'select';
+let connectingFrom = null;
+let nodeIdCounter = 0;
+let connIdCounter = 0;
+let activeConnType = 'api';
+let dragging = null;
+let dragOffset = {x:0,y:0};
+let tempLineEl = null;
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+function init() {
+  renderComponentGrid();
+  renderLegend();
+  initAI();
+  setupCanvasEvents();
+  addDefaultNodes();
+}
+
+function renderComponentGrid() {
+  const grid = document.getElementById('component-grid');
+  grid.innerHTML = '';
+  COMPONENTS.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'component-item';
+    el.draggable = true;
+    el.innerHTML = `
+      <div class="comp-icon" style="background:${c.color}22;border:1px solid ${c.color}44">${c.emoji}</div>
+      <div class="comp-label">${c.label}</div>
+    `;
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('component', c.id);
+    });
+    el.title = c.desc;
+    grid.appendChild(el);
+  });
+}
+
+function renderLegend() {
+  const list = document.getElementById('legend-list');
+  list.innerHTML = '';
+  CONN_TYPES.forEach(ct => {
+    const el = document.createElement('div');
+    el.className = 'legend-item' + (ct.id === activeConnType ? ' selected' : '');
+    el.id = 'legend-' + ct.id;
+    el.innerHTML = `<div class="legend-dot" style="background:${ct.color}"></div><span>${ct.label}</span>`;
+    el.onclick = () => {
+      activeConnType = ct.id;
+      document.querySelectorAll('.legend-item').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+    };
+    list.appendChild(el);
+  });
+}
+
+function setupCanvasEvents() {
+  const canvas = document.getElementById('canvas-container');
+  canvas.addEventListener('dragover', e => e.preventDefault());
+  canvas.addEventListener('drop', e => {
+    e.preventDefault();
+    const cid = e.dataTransfer.getData('component');
+    if (!cid) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left - 32;
+    const y = e.clientY - rect.top - 32;
+    addNode(cid, x, y);
+  });
+
+  canvas.addEventListener('click', e => {
+    if (e.target === canvas || e.target === document.getElementById('canvas-svg')) {
+      selectNode(null);
+      selectConn(null);
+    }
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (connectingFrom && tempLineEl) {
+      const rect = canvas.getBoundingClientRect();
+      const fromEl = document.getElementById('node-' + connectingFrom);
+      if (!fromEl) return;
+      const fromRect = fromEl.getBoundingClientRect();
+      const x1 = fromRect.left - rect.left + fromRect.width/2;
+      const y1 = fromRect.top - rect.top + fromRect.height/2 - 20;
+      const x2 = e.clientX - rect.left;
+      const y2 = e.clientY - rect.top;
+      const cx1 = x1 + (x2-x1)*0.5;
+      const cy1 = y1;
+      const cx2 = x1 + (x2-x1)*0.5;
+      const cy2 = y2;
+      tempLineEl.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
+    }
+  });
+}
+
+function addNode(componentId, x, y) {
+  const comp = COMPONENTS.find(c => c.id === componentId);
+  if (!comp) return;
+  const id = ++nodeIdCounter;
+  const node = { id, componentId, comp, x, y, data: {} };
+  nodes.push(node);
+  renderNode(node);
+  updateStatus();
+  return node;
+}
+
+function renderNode(node) {
+  const canvas = document.getElementById('canvas-container');
+  const el = document.createElement('div');
+  el.className = 'canvas-node';
+  el.id = 'node-' + node.id;
+  el.style.left = node.x + 'px';
+  el.style.top = node.y + 'px';
+
+  el.innerHTML = `
+    <div class="node-body" style="border-color:${node.comp.color}33">
+      <span style="font-size:26px">${node.comp.emoji}</span>
+      <div class="node-connect-btn" title="Connect" onclick="startConnect(${node.id}, event)">+</div>
+      <div class="node-delete-btn" title="Delete" onclick="deleteNode(${node.id}, event)">×</div>
+    </div>
+    <div class="node-label">${node.comp.label}</div>
+  `;
+
+  el.addEventListener('mousedown', e => {
+    if (currentTool === 'select' && !e.target.classList.contains('node-connect-btn') && !e.target.classList.contains('node-delete-btn')) {
+      startDrag(node.id, e);
+    }
+  });
+
+  el.addEventListener('click', e => {
+    if (!e.target.classList.contains('node-connect-btn') && !e.target.classList.contains('node-delete-btn')) {
+      if (connectingFrom && connectingFrom !== node.id) {
+        finishConnect(node.id);
+      } else if (currentTool === 'select') {
+        selectNode(node.id);
+      }
+    }
+  });
+
+  canvas.appendChild(el);
+}
+
+function startDrag(nodeId, e) {
+  const node = nodes.find(n => n.id === nodeId);
+  if (!node) return;
+  const el = document.getElementById('node-' + nodeId);
+  const rect = el.getBoundingClientRect();
+  dragOffset.x = e.clientX - rect.left;
+  dragOffset.y = e.clientY - rect.top;
+  dragging = nodeId;
+
+  const onMove = (ev) => {
+    const canvas = document.getElementById('canvas-container');
+    const cr = canvas.getBoundingClientRect();
+    node.x = Math.max(0, ev.clientX - cr.left - dragOffset.x);
+    node.y = Math.max(0, ev.clientY - cr.top - dragOffset.y);
+    el.style.left = node.x + 'px';
+    el.style.top = node.y + 'px';
+    renderConnections();
+  };
+
+  const onUp = () => {
+    dragging = null;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+  };
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+  e.preventDefault();
+}
+
+function startConnect(nodeId, e) {
+  e.stopPropagation();
+  if (connectingFrom === nodeId) {
+    cancelConnect();
+    return;
+  }
+  connectingFrom = nodeId;
+  const canvas = document.getElementById('canvas-container');
+  canvas.classList.add('connecting-mode');
+
+  // Highlight source node
+  document.querySelectorAll('.canvas-node').forEach(el => el.classList.remove('connecting-source'));
+  document.getElementById('node-' + nodeId).classList.add('connecting-source');
+
+  // Draw temp line
+  const svg = document.getElementById('canvas-svg');
+  svg.classList.add('connecting');
+  tempLineEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const ct = CONN_TYPES.find(c => c.id === activeConnType);
+  tempLineEl.setAttribute('stroke', ct.color);
+  tempLineEl.setAttribute('stroke-width', '2');
+  tempLineEl.setAttribute('stroke-dasharray', '5 4');
+  tempLineEl.setAttribute('fill', 'none');
+  tempLineEl.setAttribute('stroke-linecap', 'round');
+  tempLineEl.classList.add('temp-line');
+  svg.appendChild(tempLineEl);
+
+  setTool('connect');
+  document.getElementById('status-tool').textContent = 'Tool: Connecting from ' + COMPONENTS.find(c=>c.id===nodes.find(n=>n.id===nodeId).componentId).label;
+}
+
+function finishConnect(toId) {
+  if (!connectingFrom || connectingFrom === toId) { cancelConnect(); return; }
+  const existing = connections.find(c => (c.from===connectingFrom&&c.to===toId)||(c.from===toId&&c.to===connectingFrom));
+  if (!existing) {
+    const id = ++connIdCounter;
+    connections.push({ id, from: connectingFrom, to: toId, type: activeConnType });
+    renderConnections();
+  }
+  cancelConnect();
+  updateStatus();
+}
+
+function cancelConnect() {
+  connectingFrom = null;
+  const canvas = document.getElementById('canvas-container');
+  canvas.classList.remove('connecting-mode');
+  document.querySelectorAll('.canvas-node').forEach(el => el.classList.remove('connecting-source'));
+  const svg = document.getElementById('canvas-svg');
+  svg.classList.remove('connecting');
+  if (tempLineEl) { tempLineEl.remove(); tempLineEl = null; }
+  setTool('select');
+}
+
+function renderConnections() {
+  const svg = document.getElementById('canvas-svg');
+  // Remove old lines (not temp)
+  svg.querySelectorAll('.conn-line, .conn-label-group').forEach(el => el.remove());
+
+  const canvas = document.getElementById('canvas-container');
+  const cr = canvas.getBoundingClientRect();
+
+  connections.forEach(conn => {
+    const fromEl = document.getElementById('node-' + conn.from);
+    const toEl = document.getElementById('node-' + conn.to);
+    if (!fromEl || !toEl) return;
+
+    const fr = fromEl.getBoundingClientRect();
+    const tr = toEl.getBoundingClientRect();
+    const x1 = fr.left - cr.left + fr.width/2;
+    const y1 = fr.top - cr.top + fr.height/2 - 20;
+    const x2 = tr.left - cr.left + tr.width/2;
+    const y2 = tr.top - cr.top + tr.height/2 - 20;
+
+    const cx1 = x1 + (x2-x1)*0.4;
+    const cy1 = y1;
+    const cx2 = x1 + (x2-x1)*0.6;
+    const cy2 = y2;
+
+    const ct = CONN_TYPES.find(c => c.id === conn.type);
+    const color = ct ? ct.color : '#7A8FA8';
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
+    path.setAttribute('stroke', color);
+    path.setAttribute('marker-end', `url(#arrow-${conn.type})`);
+    path.classList.add('conn-line');
+    if (selectedConn === conn.id) {
+      path.setAttribute('stroke-width', '3');
+      path.setAttribute('filter', `drop-shadow(0 0 6px ${color})`);
+    }
+    path.style.stroke = color;
+    path.addEventListener('click', e => { e.stopPropagation(); selectConn(conn.id); });
+
+    svg.appendChild(path);
+
+    // Label
+    const mx = (x1+x2)/2;
+    const my = (y1+y2)/2 - 10;
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.classList.add('conn-label-group');
+    const rect2 = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    const label = ct ? ct.label : '';
+    rect2.setAttribute('x', mx-20); rect2.setAttribute('y', my-9);
+    rect2.setAttribute('width', 40); rect2.setAttribute('height', 14);
+    rect2.setAttribute('rx', 3);
+    rect2.setAttribute('fill', '#0D1320');
+    rect2.setAttribute('opacity', '0.85');
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', mx); text.setAttribute('y', my+2);
+    text.classList.add('conn-label');
+    text.style.fill = color;
+    text.textContent = label;
+    g.appendChild(rect2); g.appendChild(text);
+    svg.appendChild(g);
+  });
+}
+
+function selectNode(id) {
+  selectedNode = id;
+  selectedConn = null;
+  document.querySelectorAll('.canvas-node').forEach(el => el.classList.remove('selected'));
+  if (id) {
+    document.getElementById('node-' + id).classList.add('selected');
+    showNodeDetails(id);
+  } else {
+    hideNodeDetails();
+  }
+  renderConnections();
+}
+
+function selectConn(id) {
+  selectedConn = id;
+  selectedNode = null;
+  document.querySelectorAll('.canvas-node').forEach(el => el.classList.remove('selected'));
+  hideNodeDetails();
+  renderConnections();
+}
+
+function deleteSelectedConnection() {
+  if (!selectedConn) return;
+  connections = connections.filter(c => c.id !== selectedConn);
+  selectedConn = null;
+  renderConnections();
+  updateStatus();
+}
+
+function deleteNode(nodeId, e) {
+  e.stopPropagation();
+  nodes = nodes.filter(n => n.id !== nodeId);
+  connections = connections.filter(c => c.from !== nodeId && c.to !== nodeId);
+  const el = document.getElementById('node-' + nodeId);
+  if (el) el.remove();
+  if (selectedNode === nodeId) selectNode(null);
+  renderConnections();
+  updateStatus();
+}
+
+function showNodeDetails(id) {
+  const node = nodes.find(n => n.id === id);
+  if (!node) return;
+  document.getElementById('details-no-sel').style.display = 'none';
+  const form = document.getElementById('details-form');
+  form.style.display = 'flex';
+  document.getElementById('info-icon').textContent = node.comp.emoji;
+  document.getElementById('info-name').textContent = node.comp.label;
+  document.getElementById('info-type').textContent = node.comp.desc;
+  document.getElementById('field-alias').value = node.data.alias || '';
+  document.getElementById('field-domain').value = node.data.domain || '';
+  document.getElementById('field-ip').value = node.data.ip || '';
+  document.getElementById('field-port').value = node.data.port || '';
+  document.getElementById('field-env').value = node.data.env || '';
+  document.getElementById('field-notes').value = node.data.notes || '';
+}
+
+function hideNodeDetails() {
+  document.getElementById('details-no-sel').style.display = 'flex';
+  document.getElementById('details-form').style.display = 'none';
+}
+
+function updateNodeField(field) {
+  if (!selectedNode) return;
+  const node = nodes.find(n => n.id === selectedNode);
+  if (!node) return;
+  node.data[field] = document.getElementById('field-' + field).value;
+}
+
+function setTool(tool) {
+  currentTool = tool;
+  document.getElementById('btn-select').classList.toggle('active', tool==='select');
+  document.getElementById('btn-connect').classList.toggle('active', tool==='connect');
+  if (tool === 'select' && connectingFrom) cancelConnect();
+  document.getElementById('status-tool').textContent = 'Tool: ' + tool.charAt(0).toUpperCase() + tool.slice(1);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.right-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('content-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function updateStatus() {
+  document.getElementById('status-nodes').textContent = 'Nodes: ' + nodes.length;
+  document.getElementById('status-connections').textContent = 'Connections: ' + connections.length;
+}
+
+// ─── AI ADVISOR ─────────────────────────────────────────────────────────────
+const AI_RESPONSES = {
+  default: [
+    "Based on your current architecture, I'd recommend establishing a clear identity boundary. Place Okta as your central IdP, with AD Manager as the upstream directory and all other apps federating through Okta via SAML/OIDC.",
+    "For a zero-trust approach, ensure every connection between services goes through your identity layer. Your Firewall and VPN should enforce Okta-authenticated sessions only.",
+    "I notice you have Zapier in your diagram — be mindful of data flow security here. Zapier automations should use service accounts with minimal permissions, and all credentials should be stored in a secret manager.",
+    "Jira works well with SSO through Okta. Connect them with an Identity line and configure SCIM provisioning so user lifecycle is automated from AD Manager.",
+    "Your SIEM should receive logs from all nodes. Connect Firewall, VPN, and Okta to your SIEM using Security-type connections with syslog/API integration.",
+  ],
+  'best practices?': "Best practices for this stack: 1) Use Okta as your single IdP. 2) Enforce MFA everywhere. 3) Segment networks — keep Jamf on a separate MDM VLAN. 4) All API integrations (Zapier, GCP) should use OAuth2 with short-lived tokens. 5) Route all logs to SIEM for correlation.",
+  'okta + ad setup': "Classic pattern: AD Manager syncs users to Okta via AD Agent (runs on-premise). Okta becomes the SAML/OIDC IdP for cloud apps (Jira, GCP, Slack). Use Okta Workflows or Zapier for provisioning automation. Connect with Identity lines from AD → Okta → all SaaS apps.",
+  'zero-trust model': "Zero-trust means: never trust, always verify. Architecture: VPN gateway authenticates via Okta before granting network access. Firewall enforces micro-segmentation. Jamf enforces device posture checks that feed into Okta's device trust. All app access goes through Okta with adaptive MFA.",
+  'jira + zapier flow': "Connect Jira to Zapier via API (Zapier needs a Jira API token — store it securely). Use Zapier for: auto-creating Jira tickets from Slack alerts, syncing GCP billing alerts to Jira, notifying Slack channels on ticket status changes. Draw these as API-type connections.",
+  'network security tips': "Key tips: 1) Put Firewall between internet and internal services. 2) VPN sits in DMZ, authenticates via Okta. 3) Kubernetes cluster on internal network only — no direct internet exposure. 4) GCP connects via Cloud VPN or Interconnect. 5) SIEM monitors all east-west traffic, not just perimeter.",
+};
+
+let aiHistory = [];
+
+function initAI() {
+  addAIMessage('assistant', "Hello! I'm your Infrastructure Advisor. Drop some components onto the canvas and I'll help you design the optimal architecture. Ask me anything or try one of the hints below. 👋");
+}
+
+function addAIMessage(role, text) {
+  const messages = document.getElementById('ai-messages');
+  const msg = document.createElement('div');
+  msg.className = 'ai-msg ' + role;
+  msg.innerHTML = `
+    <div class="ai-label">${role === 'user' ? 'You' : 'AI Advisor'}</div>
+    <div class="ai-bubble">${text}</div>
+  `;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const messages = document.getElementById('ai-messages');
+  const msg = document.createElement('div');
+  msg.className = 'ai-msg assistant';
+  msg.id = 'typing-indicator';
+  msg.innerHTML = `
+    <div class="ai-label">AI Advisor</div>
+    <div class="ai-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+  `;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addAIMessage('user', text);
+  switchTab('ai');
+
+  addTypingIndicator();
+
+  // Check for keyword matches
+  const key = Object.keys(AI_RESPONSES).find(k => k !== 'default' && text.toLowerCase().includes(k));
+  const contextStr = buildContextString();
+
+  // Use Anthropic API for real AI responses
+  try {
+    const systemPrompt = `You are an infrastructure architect AI advisor embedded in a visual diagramming tool called "Infrastructure". 
+You help users design and connect IT systems including AD Manager, JIRA, Zapier, Google Cloud Platform, Okta, Jamf, Firewalls, VPNs, SIEM, Kubernetes, GitHub, and Slack.
+Be concise, technical, and actionable. Max 3-4 sentences. Focus on practical architecture advice.
+${contextStr ? 'Current diagram state:\n' + contextStr : ''}`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{ role: "user", content: text }]
+      })
+    });
+
+    removeTypingIndicator();
+
+    if (response.ok) {
+      const data = await response.json();
+      const reply = data.content?.[0]?.text || getFallbackResponse(key);
+      addAIMessage('assistant', reply);
+    } else {
+      addAIMessage('assistant', key ? AI_RESPONSES[key] : getRandomFallback());
+    }
+  } catch {
+    removeTypingIndicator();
+    addAIMessage('assistant', key ? AI_RESPONSES[key] : getRandomFallback());
+  }
+}
+
+function buildContextString() {
+  if (nodes.length === 0) return '';
+  const nodeNames = nodes.map(n => n.comp.label + (n.data.alias ? ` (${n.data.alias})` : '')).join(', ');
+  const connStrs = connections.map(c => {
+    const from = nodes.find(n=>n.id===c.from);
+    const to = nodes.find(n=>n.id===c.to);
+    return `${from?.comp.label} →[${c.type}]→ ${to?.comp.label}`;
+  }).join(', ');
+  return `Nodes on canvas: ${nodeNames}. ${connStrs ? 'Connections: ' + connStrs : 'No connections yet.'}`;
+}
+
+function getFallbackResponse(key) {
+  return key ? AI_RESPONSES[key] : getRandomFallback();
+}
+
+function getRandomFallback() {
+  const arr = AI_RESPONSES.default;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function sendHint(text) {
+  document.getElementById('ai-input').value = text;
+  sendAI();
+  switchTab('ai');
+}
+
+// ─── EXPORT ─────────────────────────────────────────────────────────────────
+function openExport() { document.getElementById('export-modal').classList.add('open'); }
+function closeExport() { document.getElementById('export-modal').classList.remove('open'); }
+
+async function exportPNG() {
+  closeExport();
+  try {
+    const canvas = document.getElementById('canvas-container');
+    const c = await html2canvas(canvas, { backgroundColor: '#080C14', scale: 2, useCORS: true, logging: false });
+    const link = document.createElement('a');
+    link.download = 'infrastructure-diagram.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+  } catch(e) { alert('Export failed. Try the JSON option.'); }
+}
+
+function exportSVG() {
+  closeExport();
+  const svgEl = document.getElementById('canvas-svg');
+  // Add nodes as foreignObject approximations
+  let svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" style="background:#080C14">`;
+  svgStr += svgEl.innerHTML;
+  // Add node labels/positions
+  nodes.forEach(n => {
+    svgStr += `<text x="${n.x+32}" y="${n.y+85}" text-anchor="middle" fill="#7A8FA8" font-size="10" font-family="monospace">${n.comp.label}</text>`;
+    svgStr += `<text x="${n.x+32}" y="${n.y+42}" text-anchor="middle" font-size="22">${n.comp.emoji}</text>`;
+    svgStr += `<rect x="${n.x}" y="${n.y}" width="64" height="64" rx="12" fill="#111827" stroke="${n.comp.color}33" stroke-width="1"/>`;
+  });
+  svgStr += '</svg>';
+  const blob = new Blob([svgStr], {type:'image/svg+xml'});
+  const link = document.createElement('a');
+  link.download = 'infrastructure-diagram.svg';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+}
+
+function exportJSON() {
+  closeExport();
+  const data = {
+    version: '1.0',
+    exportedAt: new Date().toISOString(),
+    nodes: nodes.map(n => ({ id: n.id, componentId: n.componentId, x: n.x, y: n.y, data: n.data })),
+    connections: connections.map(c => ({ id: c.id, from: c.from, to: c.to, type: c.type }))
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const link = document.createElement('a');
+  link.download = 'infrastructure-diagram.json';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+}
+
+// ─── DEFAULT LAYOUT ──────────────────────────────────────────────────────────
+function addDefaultNodes() {
+  const canvas = document.getElementById('canvas-container');
+  const w = canvas.offsetWidth;
+  const h = canvas.offsetHeight;
+
+  const layout = [
+    { id:'okta',     x: w*0.35, y: h*0.2  },
+    { id:'ad',       x: w*0.15, y: h*0.2  },
+    { id:'firewall', x: w*0.55, y: h*0.2  },
+    { id:'jira',     x: w*0.15, y: h*0.6  },
+    { id:'gcp',      x: w*0.5,  y: h*0.55 },
+    { id:'jamf',     x: w*0.72, y: h*0.35 },
+  ];
+
+  layout.forEach(l => addNode(l.id, Math.round(l.x), Math.round(l.y)));
+
+  setTimeout(() => {
+    // AD → Okta (Identity)
+    const adNode = nodes.find(n=>n.componentId==='ad');
+    const oktaNode = nodes.find(n=>n.componentId==='okta');
+    const fwNode = nodes.find(n=>n.componentId==='firewall');
+    const jiraNode = nodes.find(n=>n.componentId==='jira');
+    const gcpNode = nodes.find(n=>n.componentId==='gcp');
+    const jamfNode = nodes.find(n=>n.componentId==='jamf');
+
+    if (adNode && oktaNode) connections.push({ id:++connIdCounter, from:adNode.id, to:oktaNode.id, type:'identity' });
+    if (oktaNode && fwNode) connections.push({ id:++connIdCounter, from:oktaNode.id, to:fwNode.id, type:'security' });
+    if (oktaNode && jiraNode) connections.push({ id:++connIdCounter, from:oktaNode.id, to:jiraNode.id, type:'identity' });
+    if (fwNode && gcpNode) connections.push({ id:++connIdCounter, from:fwNode.id, to:gcpNode.id, type:'network' });
+    if (oktaNode && jamfNode) connections.push({ id:++connIdCounter, from:oktaNode.id, to:jamfNode.id, type:'identity' });
+
+    renderConnections();
+    updateStatus();
+  }, 100);
+}
+
+init();
+</script>
+</body>
+</html>
