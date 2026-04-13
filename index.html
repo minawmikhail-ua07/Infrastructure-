@@ -751,6 +751,518 @@
   .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
   .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
   @keyframes bounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
+
+  /* ── PAGE-LEVEL TABS (header) ─────────────────────────── */
+  .page-tabs { display: flex; gap: 2px; align-items: center; }
+
+  .page-tab {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .page-tab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+  .page-tab.active { color: var(--accent-cyan); background: rgba(6,182,212,0.08); border-color: var(--border); border-bottom-color: var(--bg-deep); }
+  .page-tab .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+
+  /* ── SYSTEM MONITOR PAGE ──────────────────────────────── */
+  #page-monitor {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-deep);
+  }
+
+  #page-monitor.active { display: flex; }
+  #page-architect { display: flex; flex: 1; overflow: hidden; }
+  #page-architect.hidden { display: none; }
+
+  .monitor-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 20px;
+    gap: 18px;
+  }
+
+  /* Monitor top bar */
+  .monitor-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .monitor-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .monitor-title span { color: var(--accent-cyan); }
+
+  .monitor-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 20px;
+    color: var(--accent-green);
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+
+  .monitor-refresh-btn {
+    height: 28px;
+    padding: 0 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .monitor-refresh-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-bright); }
+
+  /* ── STATUS CARDS GRID ──────────────────────────────────── */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .status-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .status-card:hover { border-color: var(--border-bright); }
+  .status-card.card-green { border-top: 2px solid var(--accent-green); }
+  .status-card.card-yellow { border-top: 2px solid var(--accent-orange); }
+  .status-card.card-red { border-top: 2px solid var(--accent-red); box-shadow: 0 0 16px rgba(239,68,68,0.1); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .card-icon-wrap {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .card-settings {
+    width: 24px; height: 24px;
+    border-radius: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-size: 12px;
+  }
+
+  .card-settings:hover { background: var(--bg-hover); color: var(--text-secondary); border-color: var(--border-bright); }
+
+  .card-body { display: flex; flex-direction: column; gap: 4px; }
+
+  .card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .card-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .card-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .status-pill.green { background: rgba(16,185,129,0.12); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.25); }
+  .status-pill.yellow { background: rgba(245,158,11,0.12); color: var(--accent-orange); border: 1px solid rgba(245,158,11,0.25); }
+  .status-pill.red { background: rgba(239,68,68,0.12); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+
+  .status-light {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-light.green { background: var(--accent-green); box-shadow: 0 0 6px rgba(16,185,129,0.6); animation: pulse 2.5s infinite; }
+  .status-light.yellow { background: var(--accent-orange); box-shadow: 0 0 6px rgba(245,158,11,0.6); animation: pulse 1.5s infinite; }
+  .status-light.red { background: var(--accent-red); box-shadow: 0 0 8px rgba(239,68,68,0.8); animation: pulse 0.8s infinite; }
+
+  .card-uptime {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+  }
+
+  .card-metrics {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metric-val {
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-primary);
+  }
+
+  .metric-lbl {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── LOWER PANEL: split alert log + summary ──────────── */
+  .monitor-lower {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 12px;
+    min-height: 0;
+  }
+
+  /* Alert Log */
+  .alert-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg-card);
+  }
+
+  .alert-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-primary);
+    letter-spacing: 0.06em;
+  }
+
+  .alert-count {
+    margin-left: auto;
+    padding: 2px 7px;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--accent-red);
+  }
+
+  .alert-filters {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .filter-btn:hover { background: var(--bg-hover); color: var(--text-secondary); }
+  .filter-btn.active { background: rgba(59,130,246,0.1); color: var(--accent-blue); border-color: rgba(59,130,246,0.35); }
+  .filter-btn.f-critical.active { background: rgba(239,68,68,0.1); color: var(--accent-red); border-color: rgba(239,68,68,0.35); }
+  .filter-btn.f-warning.active { background: rgba(245,158,11,0.1); color: var(--accent-orange); border-color: rgba(245,158,11,0.35); }
+  .filter-btn.f-info.active { background: rgba(6,182,212,0.1); color: var(--accent-cyan); border-color: rgba(6,182,212,0.35); }
+
+  .filter-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .alert-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .alert-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    transition: background 0.1s;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .alert-entry:hover { background: var(--bg-hover); }
+  .alert-entry.hidden { display: none; }
+
+  .alert-severity {
+    width: 5px;
+    border-radius: 3px;
+    align-self: stretch;
+    flex-shrink: 0;
+    min-height: 20px;
+  }
+
+  .alert-severity.critical { background: var(--accent-red); box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+  .alert-severity.warning { background: var(--accent-orange); }
+  .alert-severity.info { background: var(--accent-cyan); }
+
+  .alert-body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+
+  .alert-msg {
+    font-size: 12px;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .alert-msg.critical { color: #FCA5A5; }
+  .alert-msg.warning { color: #FCD34D; }
+  .alert-msg.info { color: var(--text-primary); }
+
+  .alert-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .alert-time {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+  }
+
+  .alert-source {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    padding: 1px 5px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .alert-badge {
+    margin-left: auto;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .alert-badge.critical { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+  .alert-badge.warning { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+  .alert-badge.info { background: rgba(6,182,212,0.1); color: var(--accent-cyan); }
+
+  /* ── SIDE SUMMARY PANEL ─────────────────────────────── */
+  .summary-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+
+  .summary-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .summary-card-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .summary-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(30,45,69,0.6);
+    font-size: 12px;
+  }
+
+  .summary-stat-row:last-child { border-bottom: none; }
+  .summary-stat-label { color: var(--text-secondary); }
+  .summary-stat-val { font-family: 'Space Mono', monospace; font-weight: 700; }
+  .summary-stat-val.green { color: var(--accent-green); }
+  .summary-stat-val.yellow { color: var(--accent-orange); }
+  .summary-stat-val.red { color: var(--accent-red); }
+  .summary-stat-val.blue { color: var(--accent-blue); }
+
+  .incident-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(30,45,69,0.6);
+  }
+
+  .incident-row:last-child { border-bottom: none; }
+  .incident-name { font-size: 11px; color: var(--text-primary); }
+  .incident-detail { font-size: 10px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
+  .incident-time { font-size: 9px; color: var(--text-muted); }
+
+  /* Webhook modal */
+  .webhook-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .webhook-modal-overlay.open { display: flex; }
+
+  .webhook-modal {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    padding: 22px;
+    width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .wh-title { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text-primary); }
+  .wh-sub { font-size: 11px; color: var(--text-muted); }
+  .wh-service { display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg-card); border-radius: 7px; border: 1px solid var(--border); margin-bottom: 4px; }
+  .wh-service-icon { font-size: 20px; }
+  .wh-service-name { font-size: 13px; font-weight: 500; }
+  .wh-row { display: flex; flex-direction: column; gap: 5px; }
+  .wh-label { font-size: 10px; font-family: 'Space Mono', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .wh-input { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: var(--text-primary); font-family: 'DM Sans', sans-serif; font-size: 12px; width: 100%; }
+  .wh-input:focus { outline: none; border-color: var(--accent-blue); }
+  .wh-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+  .wh-save { padding: 7px 16px; background: var(--accent-blue); border: none; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+  .wh-save:hover { background: #2563EB; }
+  .wh-cancel { padding: 7px 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .wh-cancel:hover { background: var(--bg-hover); }
 </style>
 </head>
 <body>
@@ -765,7 +1277,24 @@
     </div>
   </div>
   <div class="header-sep"></div>
-  <div class="header-tools">
+
+  <!-- PAGE TABS -->
+  <div class="page-tabs">
+    <div class="page-tab active" id="ptab-architect" onclick="switchPage('architect')">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="14"/><line x1="2" y1="6" x2="6" y2="6"/></svg>
+      Infrastructure
+    </div>
+    <div class="page-tab" id="ptab-monitor" onclick="switchPage('monitor')">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,4 8,8 11,10"/></svg>
+      System Monitor
+      <span id="monitor-alert-badge" style="display:none;background:var(--accent-red);color:#fff;font-size:9px;font-family:'Space Mono',monospace;padding:1px 5px;border-radius:8px;margin-left:2px;">0</span>
+    </div>
+  </div>
+
+  <div class="header-sep"></div>
+
+  <!-- ARCHITECT TOOLS (hidden on monitor page) -->
+  <div class="header-tools" id="architect-tools">
     <button class="tool-btn active" id="btn-select" onclick="setTool('select')">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2l5 12 2-4 4-2-11-6z"/></svg>
       Select
@@ -779,13 +1308,17 @@
       Delete Line
     </button>
   </div>
+
   <div class="header-right">
-    <button class="export-btn" onclick="openExport()">
+    <button class="export-btn" id="export-btn-header" onclick="openExport()">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v9M5 8l3 3 3-3M2 13h12"/></svg>
       Export
     </button>
   </div>
 </header>
+
+<!-- ARCHITECT PAGE -->
+<div id="page-architect">
 
 <!-- WORKSPACE -->
 <div class="workspace">
@@ -904,6 +1437,75 @@
   </div>
 </div>
 
+</div><!-- end .workspace -->
+</div><!-- end #page-architect -->
+
+<!-- SYSTEM MONITOR PAGE -->
+<div id="page-monitor">
+  <div class="monitor-layout">
+
+    <!-- Top Bar -->
+    <div class="monitor-topbar">
+      <div class="monitor-title">// <span>System Monitor</span> — Integration Health</div>
+      <div class="monitor-meta">
+        <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+        <span id="monitor-clock">--:--:--</span>
+        <button class="monitor-refresh-btn" onclick="refreshMonitor()">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13.5 8A5.5 5.5 0 112.5 8"/><polyline points="13.5,4 13.5,8 9.5,8"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Cards -->
+    <div class="status-grid" id="status-grid"></div>
+
+    <!-- Lower: Alert Log + Summary -->
+    <div class="monitor-lower">
+
+      <!-- Alert Log -->
+      <div class="alert-panel">
+        <div class="alert-header">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L2 13h12L8 2z"/><line x1="8" y1="7" x2="8" y2="10"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>
+          <div class="alert-title">ALERT LOG</div>
+          <span id="critical-count" class="alert-count">0 critical</span>
+        </div>
+        <div class="alert-filters">
+          <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">All</button>
+          <button class="filter-btn f-critical" id="filter-critical" onclick="setFilter('critical')"><span class="filter-dot"></span>Critical</button>
+          <button class="filter-btn f-warning" id="filter-warning" onclick="setFilter('warning')"><span class="filter-dot"></span>Warning</button>
+          <button class="filter-btn f-info" id="filter-info" onclick="setFilter('info')"><span class="filter-dot"></span>Info</button>
+          <button class="filter-btn" id="filter-clear" onclick="clearAlerts()" style="margin-left:auto;color:var(--accent-red);border-color:rgba(239,68,68,0.25)">Clear</button>
+        </div>
+        <div class="alert-log" id="alert-log"></div>
+      </div>
+
+      <!-- Summary Sidebar -->
+      <div class="summary-panel">
+        <div class="summary-card">
+          <div class="summary-card-title">Overview</div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Operational</span><span class="summary-stat-val green" id="sum-operational">—</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Degraded</span><span class="summary-stat-val yellow" id="sum-degraded">—</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Down</span><span class="summary-stat-val red" id="sum-down">—</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Total Alerts</span><span class="summary-stat-val blue" id="sum-total">—</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">Active Incidents</div>
+          <div id="incidents-list"></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">Uptime (24h)</div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Okta</span><span class="summary-stat-val green" id="up-okta">99.9%</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Jira</span><span class="summary-stat-val yellow" id="up-jira">94.2%</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Google WS</span><span class="summary-stat-val green" id="up-google">99.7%</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Slack</span><span class="summary-stat-val red" id="up-slack">71.3%</span></div>
+          <div class="summary-stat-row"><span class="summary-stat-label">Jamf</span><span class="summary-stat-val green" id="up-jamf">100%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- end #page-monitor -->
+
 <!-- STATUS BAR -->
 <div class="statusbar">
   <div class="status-item"><div class="status-dot"></div>Ready</div>
@@ -946,6 +1548,37 @@
 </div>
 
 <div class="tooltip" id="tooltip"></div>
+
+<!-- WEBHOOK MODAL -->
+<div class="webhook-modal-overlay" id="webhook-modal">
+  <div class="webhook-modal">
+    <div class="wh-title">// Configure Webhook</div>
+    <div class="wh-sub">Set up an inbound webhook to receive real-time status events from this integration.</div>
+    <div class="wh-service" id="wh-service-info">
+      <div class="wh-service-icon" id="wh-icon"></div>
+      <div>
+        <div class="wh-service-name" id="wh-name"></div>
+        <div style="font-size:10px;color:var(--text-muted);font-family:'Space Mono',monospace" id="wh-type"></div>
+      </div>
+    </div>
+    <div class="wh-row">
+      <div class="wh-label">Webhook URL</div>
+      <input class="wh-input" id="wh-url" placeholder="https://your-endpoint.com/webhook">
+    </div>
+    <div class="wh-row">
+      <div class="wh-label">Secret Token</div>
+      <input class="wh-input" id="wh-secret" placeholder="whsec_••••••••••••">
+    </div>
+    <div class="wh-row">
+      <div class="wh-label">Events to Receive</div>
+      <input class="wh-input" id="wh-events" placeholder="status.changed, alert.created, sync.failed">
+    </div>
+    <div class="wh-footer">
+      <button class="wh-cancel" onclick="closeWebhook()">Cancel</button>
+      <button class="wh-save" onclick="saveWebhook()">Save Webhook</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -1568,7 +2201,257 @@ function addDefaultNodes() {
   }, 100);
 }
 
-init();
+// ─── PAGE SWITCHING ─────────────────────────────────────────────────────────
+function switchPage(page) {
+  document.getElementById('page-architect').classList.toggle('hidden', page !== 'architect');
+  document.getElementById('page-monitor').classList.toggle('active', page === 'monitor');
+  document.getElementById('ptab-architect').classList.toggle('active', page === 'architect');
+  document.getElementById('ptab-monitor').classList.toggle('active', page === 'monitor');
+  document.getElementById('architect-tools').style.display = page === 'architect' ? 'flex' : 'none';
+  document.getElementById('export-btn-header').style.display = page === 'architect' ? 'flex' : 'none';
+  if (page === 'monitor') startMonitorClock();
+}
+
+// ─── SYSTEM MONITOR ──────────────────────────────────────────────────────────
+const SERVICES = [
+  { id:'okta',    name:'Okta',              emoji:'🔐', color:'#007DC1', category:'Identity Provider',  status:'green',  latency:'42ms',  users:'1,204' },
+  { id:'jira',    name:'Jira',              emoji:'📋', color:'#0052CC', category:'Project Tracking',   status:'yellow', latency:'310ms', users:'847'   },
+  { id:'google',  name:'Google Workspace',  emoji:'☁️', color:'#4285F4', category:'Productivity Suite', status:'green',  latency:'89ms',  users:'1,204' },
+  { id:'slack',   name:'Slack',             emoji:'💬', color:'#4A154B', category:'Team Communication', status:'red',    latency:'—',     users:'0'     },
+  { id:'jamf',    name:'Jamf Pro',          emoji:'🍎', color:'#75B0E0', category:'Device Management',  status:'green',  latency:'55ms',  users:'634'   },
+];
+
+const STATUS_LABELS = { green:'Operational', yellow:'Degraded', red:'Down' };
+
+let alertLog = [];
+let alertIdCounter = 0;
+let activeFilter = 'all';
+let monitorClockInterval = null;
+
+const MOCK_ALERTS = [
+  // These fire on load in sequence
+  { delay:500,   severity:'critical', source:'Slack',            msg:'API heartbeat lost — Slack integration unreachable. Last ping: 4m ago.' },
+  { delay:1200,  severity:'critical', source:'Jira',             msg:'Termination workflow started for Alex Rivera (alex.r@company.com). Deprovisioning queued.' },
+  { delay:2000,  severity:'warning',  source:'Google Workspace', msg:'License expiring in 30 days: 47 seats on Business Starter plan (renewal due 2025-05-12).' },
+  { delay:2800,  severity:'critical', source:'Okta → Jira',      msg:'Sync failure: SCIM provisioning interrupted between Okta and Jira. 3 users pending.' },
+  { delay:3600,  severity:'info',     source:'Okta',             msg:'MFA challenge rate elevated: 23% of logins prompted (baseline: 8%). No breach detected.' },
+  { delay:4400,  severity:'warning',  source:'Jamf',             msg:'12 devices have not checked in for >7 days. MDM compliance policy may not be enforced.' },
+  { delay:5200,  severity:'info',     source:'Jira',             msg:'Termination workflow for Alex Rivera: IT ticket JIT-4892 created and assigned.' },
+  { delay:6000,  severity:'critical', source:'Slack',            msg:'Slack API still unreachable — escalating to P1 incident. Webhook alerts suspended.' },
+  { delay:7500,  severity:'warning',  source:'Google Workspace', msg:'Storage quota at 84%: 3 shared drives nearing limit. Consider archiving or expanding plan.' },
+  { delay:9000,  severity:'info',     source:'Okta',             msg:'Password reset completed for 8 users following security audit recommendation.' },
+  { delay:11000, severity:'info',     source:'Jamf',             msg:'macOS 14.4.1 update available — 512 devices eligible. Deployment window opens Sat 02:00.' },
+  { delay:13000, severity:'warning',  source:'Jira',             msg:'Response time degraded: avg 310ms (SLA threshold: 250ms). Auto-scaling triggered.' },
+  { delay:16000, severity:'critical', source:'Okta → Jira',      msg:'Second SCIM sync attempt failed. Manual intervention required for user provisioning.' },
+];
+
+// Ongoing random alerts after initial batch
+const ONGOING_ALERTS = [
+  { severity:'info',     source:'Okta',            msg:'Successful login for sysadmin@company.com from new device (MacBook Pro, San Francisco).' },
+  { severity:'warning',  source:'Jamf',            msg:'Device compliance check failed for LAPTOP-0391. FileVault encryption not enabled.' },
+  { severity:'info',     source:'Google Workspace',msg:'New service account created: svc-backup-runner@company.iam (requestor: devops-team).' },
+  { severity:'warning',  source:'Slack',           msg:'Slack API still unreachable. Fallback notifications routing through email.' },
+  { severity:'info',     source:'Jira',            msg:'Offboarding checklist 63% complete for Alex Rivera. Pending: license revocation, archive.' },
+  { severity:'critical', source:'Okta',            msg:'Brute-force detection: 15 failed login attempts for user mark.t@company.com. Account locked.' },
+  { severity:'info',     source:'Google Workspace',msg:'Admin report: 99.7% uptime this month. 2 minor API degradation events logged.' },
+  { severity:'warning',  source:'Okta → Jira',     msg:'SCIM sync queue depth: 11 pending operations. Retry scheduled in 5 minutes.' },
+];
+
+function initMonitor() {
+  renderStatusCards();
+  updateSummary();
+  fireMockAlerts();
+  setInterval(fireOngoingAlert, 18000);
+  updateMonitorBadge();
+}
+
+function renderStatusCards() {
+  const grid = document.getElementById('status-grid');
+  grid.innerHTML = '';
+  SERVICES.forEach(s => {
+    const colorClass = { green:'card-green', yellow:'card-yellow', red:'card-red' }[s.status];
+    const pillClass = s.status;
+    const label = STATUS_LABELS[s.status];
+    grid.innerHTML += `
+      <div class="status-card ${colorClass}" id="card-${s.id}">
+        <div class="card-top">
+          <div class="card-icon-wrap" style="background:${s.color}18;border:1px solid ${s.color}33">${s.emoji}</div>
+          <button class="card-settings" onclick="openWebhook('${s.id}')" title="Configure Webhook">⚙</button>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${s.name}</div>
+          <div class="card-desc">${s.category}</div>
+        </div>
+        <div class="card-status-row">
+          <div class="status-pill ${pillClass}">
+            <div class="status-light ${pillClass}"></div>
+            ${label}
+          </div>
+          <div class="card-uptime" id="uptime-${s.id}">${s.latency}</div>
+        </div>
+        <div class="card-metrics">
+          <div class="card-metric">
+            <div class="metric-val" style="color:${s.color}">${s.users}</div>
+            <div class="metric-lbl">Users</div>
+          </div>
+          <div class="card-metric">
+            <div class="metric-val" id="ping-${s.id}">${s.latency}</div>
+            <div class="metric-lbl">Latency</div>
+          </div>
+          <div class="card-metric">
+            <div class="metric-val" id="events-${s.id}">0</div>
+            <div class="metric-lbl">Events</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function addAlert(severity, source, msg, animate=true) {
+  const now = new Date();
+  const ts = now.toTimeString().slice(0,8);
+  const id = ++alertIdCounter;
+  const entry = { id, severity, source, msg, ts };
+  alertLog.unshift(entry);
+
+  const log = document.getElementById('alert-log');
+  const el = document.createElement('div');
+  el.className = 'alert-entry' + (activeFilter !== 'all' && activeFilter !== severity ? ' hidden' : '');
+  el.id = 'alert-' + id;
+  el.dataset.severity = severity;
+  el.innerHTML = `
+    <div class="alert-severity ${severity}"></div>
+    <div class="alert-body">
+      <div class="alert-msg ${severity}">${msg}</div>
+      <div class="alert-meta">
+        <span class="alert-time">${ts}</span>
+        <span class="alert-source">${source}</span>
+        <span class="alert-badge ${severity}">${severity}</span>
+      </div>
+    </div>`;
+  log.insertBefore(el, log.firstChild);
+
+  // Keep max 60 entries
+  while (log.children.length > 60) log.removeChild(log.lastChild);
+
+  updateCriticalCount();
+  updateSummary();
+  updateMonitorBadge();
+
+  // Bump event counter for matching service
+  const svc = SERVICES.find(s => source.toLowerCase().includes(s.id) || source.toLowerCase().includes(s.name.toLowerCase().split(' ')[0]));
+  if (svc) {
+    const el2 = document.getElementById('events-' + svc.id);
+    if (el2) el2.textContent = parseInt(el2.textContent||0) + 1;
+  }
+}
+
+function fireMockAlerts() {
+  MOCK_ALERTS.forEach(a => {
+    setTimeout(() => addAlert(a.severity, a.source, a.msg), a.delay);
+  });
+}
+
+function fireOngoingAlert() {
+  const a = ONGOING_ALERTS[Math.floor(Math.random() * ONGOING_ALERTS.length)];
+  addAlert(a.severity, a.source, a.msg);
+}
+
+function updateCriticalCount() {
+  const n = alertLog.filter(a => a.severity === 'critical').length;
+  document.getElementById('critical-count').textContent = n + ' critical';
+}
+
+function updateSummary() {
+  const op = SERVICES.filter(s => s.status==='green').length;
+  const deg = SERVICES.filter(s => s.status==='yellow').length;
+  const down = SERVICES.filter(s => s.status==='red').length;
+  document.getElementById('sum-operational').textContent = op;
+  document.getElementById('sum-degraded').textContent = deg;
+  document.getElementById('sum-down').textContent = down;
+  document.getElementById('sum-total').textContent = alertLog.length;
+
+  // Incidents list
+  const incidents = [
+    { name:'Slack API Down', detail:'P1 · Ongoing · 4m duration', time:'Critical' },
+    { name:'Jira SCIM Sync Failure', detail:'P2 · Okta → Jira · Manual needed', time:'Critical' },
+    { name:'Google Workspace Expiry', detail:'License · 30 days · 47 seats', time:'Warning' },
+  ];
+  const list = document.getElementById('incidents-list');
+  list.innerHTML = incidents.map(i => `
+    <div class="incident-row">
+      <div class="incident-name">${i.name}</div>
+      <div class="incident-detail">${i.detail}</div>
+      <div class="incident-time" style="color:${i.time==='Critical'?'var(--accent-red)':'var(--accent-orange)'}">${i.time}</div>
+    </div>`).join('');
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  ['all','critical','warning','info'].forEach(x => {
+    const btn = document.getElementById('filter-' + x);
+    if (btn) btn.classList.toggle('active', x === f);
+  });
+  document.querySelectorAll('.alert-entry').forEach(el => {
+    el.classList.toggle('hidden', f !== 'all' && el.dataset.severity !== f);
+  });
+}
+
+function clearAlerts() {
+  alertLog = [];
+  alertIdCounter = 0;
+  document.getElementById('alert-log').innerHTML = '';
+  updateCriticalCount();
+  updateSummary();
+  updateMonitorBadge();
+}
+
+function refreshMonitor() {
+  renderStatusCards();
+  // Simulate a random service flickering
+  const svc = SERVICES[Math.floor(Math.random() * SERVICES.length)];
+  addAlert('info', svc.name, `Manual refresh triggered. Polling ${svc.name} status endpoint...`);
+  setTimeout(() => addAlert('info', svc.name, `${svc.name} status confirmed: ${STATUS_LABELS[svc.status]}.`), 800);
+}
+
+function startMonitorClock() {
+  if (monitorClockInterval) return;
+  monitorClockInterval = setInterval(() => {
+    document.getElementById('monitor-clock').textContent = new Date().toTimeString().slice(0,8);
+  }, 1000);
+}
+
+function updateMonitorBadge() {
+  const n = alertLog.filter(a => a.severity === 'critical').length;
+  const badge = document.getElementById('monitor-alert-badge');
+  if (n > 0) { badge.style.display = 'inline'; badge.textContent = n; }
+  else { badge.style.display = 'none'; }
+}
+
+// Webhook modal
+function openWebhook(serviceId) {
+  const s = SERVICES.find(x => x.id === serviceId);
+  if (!s) return;
+  document.getElementById('wh-icon').textContent = s.emoji;
+  document.getElementById('wh-name').textContent = s.name;
+  document.getElementById('wh-type').textContent = s.category;
+  document.getElementById('wh-url').value = '';
+  document.getElementById('wh-secret').value = '';
+  document.getElementById('wh-events').value = 'status.changed, alert.created, sync.failed';
+  document.getElementById('webhook-modal').classList.add('open');
+}
+
+function closeWebhook() { document.getElementById('webhook-modal').classList.remove('open'); }
+
+function saveWebhook() {
+  const url = document.getElementById('wh-url').value.trim();
+  const name = document.getElementById('wh-name').textContent;
+  if (!url) { document.getElementById('wh-url').style.borderColor = 'var(--accent-red)'; return; }
+  closeWebhook();
+  addAlert('info', name, `Webhook configured: ${url.length > 40 ? url.slice(0,40)+'…' : url}`);
+}
+
+initMonitor();
 </script>
 </body>
 </html>
